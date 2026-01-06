@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lotofácil Quant</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#020617">
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0f19;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .app {
+      background: #020617;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: #2563eb;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+
+    .disclaimer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Lotofácil Quant</h1>
+
+    <div class="subtitle">
+      Sistema estatístico de apoio à Lotofácil<br>
+      Sem previsão • Sem promessa
+    </div>
+
+    <button onclick="gerarJogo()">Gerar jogo</button>
+
+    <div class="result" id="resultado">—</div>
+
+    <div class="disclaimer">
+      A Lotofácil é um jogo de probabilidade uniforme.<br>
+      Esta ferramenta não garante ganhos nem altera chances.
+    </div>
+  </div>
+
+  <script>
+    function gerarJogo() {
+      const pares = [];
+      const impares = [];
+
+      for (let i = 1; i <= 25; i++) {
+        if (i % 2 === 0) {
+          pares.push(i);
+        } else {
+          impares.push(i);
+        }
+      }
+
+      const jogo = new Set();
+
+      while (jogo.size < 7) {
+        jogo.add(pares[Math.floor(Math.random() * pares.length)]);
+      }
+
+      while (jogo.size < 15) {
+        jogo.add(impares[Math.floor(Math.random() * impares.length)]);
+      }
+
+      const resultado = Array.from(jogo).sort((a, b) => a - b);
+
+      document.getElementById("resultado").innerText =
+        resultado.map(n => n.toString().padStart(2, "0")).join(" • ");
+    }
+
+    // Registrar Service Worker (PWA)
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+</body>
+</html>

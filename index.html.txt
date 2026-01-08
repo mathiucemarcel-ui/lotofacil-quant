@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lotofácil Quant PRO</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#020617">
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0f19;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .app {
+      background: #020617;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: #2563eb;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+
+    .stats, .history {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #cbd5f5;
+    }
+
+    .disclaimer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BLOQUEIO PRO -->
+  <div class="app" id="bloqueio">
+    <h1>🔒 Lotofácil Quant PRO</h1>
+    <div class="subtitle">Acesso exclusivo para assinantes</div>
+
+    <input type="password" id="senhaPro" placeholder="Digite sua senha PRO">
+    <button onclick="verificarSenha()">Entrar</button>
+
+    <div class="disclaimer">
+      Sistema estatístico. Não prevê resultados.
+    </div>
+  </div>
+
+  <!-- APP PRO -->
+  <div class="app" id="app" style="display:none;">
+    <h1>Lotofácil Quant PRO</h1>
+
+    <div class="subtitle">
+      Estatística • Organização • Simulação
+    </div>
+
+    <button onclick="gerarJogo()">Gerar jogo</button>
+
+    <div class="result" id="resultado">—</div>
+    <div class="stats" id="estatisticas"></div>
+    <div class="history" id="historico"></div>
+
+    <div class="disclaimer">
+      A Lotofácil é um jogo de probabilidade uniforme.<br>
+      Esta ferramenta não garante ganhos nem altera chances.
+    </div>
+  </div>
+
+  <script>
+    /* ===== CONTROLE PRO ===== */
+    const SENHA_CORRETA = "quantpro2026";
+
+    function verificarSenha() {
+      const senha = document.getElementById("senhaPro").value;
+      if (senha === SENHA_CORRETA) {
+        localStorage.setItem("acessoPro", "true");
+        iniciarApp();
+      } else {
+        alert("Senha incorreta");
+      }
+    }
+
+    function iniciarApp() {
+      document.getElementById("bloqueio").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      carregarHistorico();
+    }
+
+    if (localStorage.getItem("acessoPro") === "true") {
+      iniciarApp();
+    }
+
+    /* ===== GERADOR ===== */
+    function gerarJogo() {
+      const pares = [];
+      const impares = [];
+
+      for (let i = 1; i <= 25; i++) {
+        (i % 2 === 0 ? pares : impares).push(i);
+      }
+
+      const jogo = new Set();
+
+      while (jogo.size < 7) {
+        jogo.add(pares[Math.floor(Math.random() * pares.length)]);
+      }
+
+      while (jogo.size < 15) {
+        jogo.add(impares[Math.floor(Math.random() * impares.length)]);
+      }
+
+      const resultado = Array.from(jogo).sort((a, b) => a - b);
+
+      document.getElementById("resultado").innerText =
+        resultado.map(n => n.toString().padStart(2, "0")).join(" • ");
+
+      mostrarEstatisticas(resultado);
+      salvarHistorico(resultado);
+      carregarHistorico();
+    }
+
+    /* ===== ESTATÍSTICAS ===== */
+    function mostrarEstatisticas(jogo) {
+      const pares = jogo.filter(n => n % 2 === 0).length;
+      const soma = jogo.reduce((a, b) => a + b, 0);
+
+      document.getElementById("estatisticas").innerHTML =
+        `📊 Pares: ${pares} | Ímpares: ${15 - pares}<br>🔢 Soma: ${soma}`;
+    }
+
+    /* ===== HISTÓRICO ===== */
+    function salvarHistorico(jogo) {
+      let h = JSON.parse(localStorage.getItem("historico")) || [];
+      h.unshift({ data: new Date().toLocaleString(), jogo });
+      localStorage.setItem("historico", JSON.stringify(h.slice(0, 10)));
+    }
+
+    function carregarHistorico() {
+      let h = JSON.parse(localStorage.getItem("historico")) || [];
+      let html = "<strong>📁 Histórico</strong><br>";
+      h.forEach(i => {
+        html += `${i.data}: ${i.jogo.join(", ")}<br>`;
+      });
+      document.getElementById("historico").innerHTML = html;
+    }
+
+    /* ===== PWA ===== */
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+
+</body>
+</html>

@@ -1,188 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lotofácil Quant PRO</title>
+  <meta charset="UTF-8">
+  <title>Lotofácil Quant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#020617">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0b0f19;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
-<style>
-body {
-  font-family: system-ui, sans-serif;
-  background:#0b0f19;
-  color:#e5e7eb;
-  margin:0;
-  display:flex;
-  justify-content:center;
-}
-.app {
-  max-width:420px;
-  width:100%;
-  padding:20px;
-}
-h1 {text-align:center;font-size:22px;}
-.subtitle {text-align:center;font-size:13px;color:#94a3b8;margin-bottom:16px;}
-.card {
-  border:1px solid #1e293b;
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:12px;
-  background:#020617;
-}
-.card h3 {margin:0 0 8px 0;font-size:14px;color:#93c5fd;}
-.options {display:flex;gap:6px;}
-.option {
-  flex:1;text-align:center;padding:8px;
-  border:1px solid #334155;border-radius:8px;
-  cursor:pointer;font-size:13px;
-}
-.option.active {background:#2563eb;border-color:#2563eb;}
-.locked {opacity:.4;pointer-events:none;}
-button {
-  width:100%;padding:14px;border:none;
-  background:#2563eb;color:#fff;
-  border-radius:12px;font-size:16px;
-}
-.result {margin:14px 0;text-align:center;font-size:20px;}
-.box {border:1px solid #1e293b;border-radius:12px;padding:10px;margin-top:10px;font-size:13px;}
-.micro {font-size:11px;color:#64748b;margin-top:6px;}
-.modal {
-  position:fixed;inset:0;background:rgba(0,0,0,.7);
-  display:none;align-items:center;justify-content:center;
-}
-.modal-content {
-  background:#020617;border-radius:14px;
-  padding:20px;max-width:320px;width:100%;
-}
-input {
-  width:100%;padding:10px;border-radius:8px;
-  border:1px solid #334155;background:#020617;color:#fff;
-}
-</style>
+    .app {
+      background: #020617;
+      width: 100%;
+      max-width: 420px;
+      padding: 24px;
+      border-radius: 16px;
+    }
+
+    h1 { text-align: center; }
+
+    label {
+      font-size: 13px;
+      display: block;
+      margin-top: 12px;
+      color: #94a3b8;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+  </style>
 </head>
 
 <body>
 <div class="app">
-<h1>Lotofácil Quant PRO</h1>
-<div class="subtitle">Organização estatística • Sem previsão</div>
+  <h1>Lotofácil Quant</h1>
 
-<!-- TUTORIAL -->
-<div class="card">
-<h3>📘 Tutorial</h3>
-<div class="micro">
-Configure filtros → Gere jogos → Analise padrões.<br>
-Filtros NÃO alteram probabilidades.
-</div>
-</div>
+  <label>Pares desejados</label>
+  <select id="pares">
+    <option value="6">6 pares</option>
+    <option value="7">7 pares</option>
+    <option value="8">8 pares</option>
+  </select>
 
-<!-- PARIDADE -->
-<div class="card">
-<h3>Paridade</h3>
-<div class="options">
-<div class="option active" onclick="setParidade(7)">7P / 8I</div>
-<div class="option" onclick="setParidade(6)">6P / 9I</div>
-<div class="option" onclick="setParidade(8)">8P / 7I</div>
-</div>
-</div>
+  <label>Linhas do volante</label>
+  <select id="linhas">
+    <option value="todas">Todas</option>
+    <option value="1">Linha 1</option>
+    <option value="2">Linha 2</option>
+    <option value="3">Linha 3</option>
+    <option value="4">Linha 4</option>
+    <option value="5">Linha 5</option>
+  </select>
 
-<!-- FILTROS PRO -->
-<div class="card" id="proFilters">
-<h3>Filtros PRO</h3>
+  <button onclick="gerarJogo()">Gerar jogo</button>
 
-<div class="micro">Linhas do volante</div>
-<div class="options">
-<div class="option" onclick="toggleLinha(1)">L1</div>
-<div class="option" onclick="toggleLinha(2)">L2</div>
-<div class="option" onclick="toggleLinha(3)">L3</div>
-<div class="option" onclick="toggleLinha(4)">L4</div>
-<div class="option" onclick="toggleLinha(5)">L5</div>
-</div>
-
-<div class="micro">Soma dos números</div>
-<input id="somaMin" placeholder="Soma mínima (ex: 180)">
-<input id="somaMax" placeholder="Soma máxima (ex: 220)">
-
-<div class="micro">Atraso estatístico</div>
-<div class="options">
-<div class="option active" onclick="setAtraso(true)">Ativo</div>
-<div class="option" onclick="setAtraso(false)">Inativo</div>
-</div>
-
-</div>
-
-<button onclick="gerarJogo()">Gerar jogo</button>
-<div class="result" id="resultado">—</div>
-
-<div class="box"><b>Histórico</b><div id="historico"></div></div>
-
-<div class="box"><b>Estatísticas</b><div id="estatisticas"></div></div>
-
-<div class="micro" style="text-align:center;margin-top:10px;">
-<a href="#" onclick="abrirPro()">Ativar modo PRO</a>
-</div>
-</div>
-
-<!-- MODAL PRO -->
-<div class="modal" id="modalPro">
-<div class="modal-content">
-<h3>Ativar PRO</h3>
-<input id="codigoPro" placeholder="Código PRO">
-<button onclick="ativarPro()">Ativar</button>
-</div>
+  <div class="result" id="resultado">—</div>
 </div>
 
 <script>
-const HIST="hist";let paresSel=7,linhas=[],usarAtraso=true;
-let isPro=localStorage.getItem("PRO")==="1";
+function gerarJogo() {
+  const paresDesejados = parseInt(document.getElementById("pares").value);
+  const linhaFiltro = document.getElementById("linhas").value;
 
-function setParidade(p){paresSel=p;}
-function toggleLinha(l){linhas.includes(l)?linhas=linhas.filter(x=>x!==l):linhas.push(l);}
-function setAtraso(v){usarAtraso=v;}
+  const numeros = Array.from({ length: 25 }, (_, i) => i + 1);
 
-function gerarJogo(){
-let nums=[...Array(25)].map((_,i)=>i+1);
-let pares=nums.filter(n=>n%2===0), imp=nums.filter(n=>n%2);
-let jogo=new Set();
-while(jogo.size<paresSel) jogo.add(pares[Math.random()*pares.length|0]);
-while(jogo.size<15) jogo.add(imp[Math.random()*imp.length|0]);
-let arr=[...jogo].sort((a,b)=>a-b);
+  let candidatos = numeros.filter(n => {
+    if (linhaFiltro === "todas") return true;
+    return Math.ceil(n / 5) == linhaFiltro;
+  });
 
-let soma=arr.reduce((a,b)=>a+b,0);
-let min=+document.getElementById("somaMin").value||0;
-let max=+document.getElementById("somaMax").value||999;
+  const pares = candidatos.filter(n => n % 2 === 0);
+  const impares = candidatos.filter(n => n % 2 !== 0);
 
-if((soma<min||soma>max)) return gerarJogo();
+  if (pares.length < paresDesejados) {
+    alert("Filtro inválido para essa linha.");
+    return;
+  }
 
-document.getElementById("resultado").innerText=arr.join(" • ");
-salvar(arr);
+  const jogo = new Set();
+
+  while (jogo.size < paresDesejados) {
+    jogo.add(pares[Math.floor(Math.random() * pares.length)]);
+  }
+
+  while (jogo.size < 15) {
+    jogo.add(impares[Math.floor(Math.random() * impares.length)]);
+  }
+
+  const resultado = Array.from(jogo).sort((a, b) => a - b);
+  document.getElementById("resultado").innerText =
+    resultado.map(n => n.toString().padStart(2, "0")).join(" • ");
 }
-
-function salvar(j){
-let h=JSON.parse(localStorage.getItem(HIST)||"[]");
-h.unshift(j);if(h.length>10)h.pop();
-localStorage.setItem(HIST,JSON.stringify(h));
-render();
-}
-
-function render(){
-let h=JSON.parse(localStorage.getItem(HIST)||"[]");
-document.getElementById("historico").innerHTML=h.map(j=>"• "+j.join(" ")).join("<br>");
-}
-
-function abrirPro(){document.getElementById("modalPro").style.display="flex";}
-function ativarPro(){
-if(document.getElementById("codigoPro").value==="QUANT-PRO-2026"){
-localStorage.setItem("PRO","1");location.reload();
-}
-}
-
-if(!isPro) document.getElementById("proFilters").classList.add("locked");
-render();
-
-if("serviceWorker"in navigator) navigator.serviceWorker.register("service-worker.js");
 </script>
 </body>
 </html>
-

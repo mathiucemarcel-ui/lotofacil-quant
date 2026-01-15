@@ -5,121 +5,96 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lotofácil Quant PRO</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020617">
+
 <style>
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: radial-gradient(circle at top, #020617, #000);
-  color: #e5e7eb;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
+  font-family: system-ui, sans-serif;
+  background:#0b0f19;
+  color:#e5e7eb;
+  margin:0;
+  display:flex;
+  justify-content:center;
 }
-
 .app {
-  background: linear-gradient(180deg, #020617, #020617);
-  width: 100%;
-  max-width: 430px;
-  padding: 24px;
-  border-radius: 18px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+  max-width:420px;
+  width:100%;
+  padding:20px;
 }
-
-h1 {
-  text-align: center;
-  margin-bottom: 4px;
+h1 {text-align:center;font-size:22px;}
+.subtitle {text-align:center;font-size:13px;color:#94a3b8;margin-bottom:16px;}
+.badge {
+  text-align:center;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:20px;
+  margin-bottom:10px;
+  border:1px solid #1e293b;
 }
-
-.mode {
-  text-align: center;
-  font-size: 12px;
-  margin-bottom: 18px;
-  padding: 6px;
-  border-radius: 20px;
-  background: #020617;
-  border: 1px solid #1e293b;
+.badge.pro {color:#22c55e;border-color:#22c55e;}
+.card {
+  border:1px solid #1e293b;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  background:#020617;
 }
-
-.section {
-  margin-bottom: 16px;
+.card h3 {margin:0 0 8px 0;font-size:14px;color:#93c5fd;}
+.options {display:flex;gap:6px;flex-wrap:wrap;}
+.option {
+  flex:1;
+  min-width:60px;
+  text-align:center;
+  padding:8px;
+  border:1px solid #334155;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
 }
-
-label {
-  font-size: 13px;
-  color: #cbd5f5;
-  display: block;
-  margin-bottom: 6px;
-}
-
-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  background: #020617;
-  color: #e5e7eb;
-  border: 1px solid #1e293b;
-}
-
-.locked {
-  opacity: 0.45;
-  pointer-events: none;
-  position: relative;
-}
-
-.locked::after {
-  content: "🔒 PRO";
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 12px;
-  color: #facc15;
-}
-
+.option.active {background:#2563eb;border-color:#2563eb;}
+.locked {opacity:.4;pointer-events:none;}
 button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
+  width:100%;
+  padding:14px;
+  border:none;
+  background:#2563eb;
+  color:#fff;
+  border-radius:12px;
+  font-size:16px;
 }
-
-button:active {
-  transform: scale(0.98);
+.result {margin:14px 0;text-align:center;font-size:20px;}
+.box {
+  border:1px solid #1e293b;
+  border-radius:12px;
+  padding:10px;
+  margin-top:10px;
+  font-size:13px;
 }
-
-.result {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 20px;
-  letter-spacing: 1px;
+.micro {font-size:11px;color:#64748b;margin-top:6px;}
+.modal {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
 }
-
-.upgrade {
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #020617, #020617);
-  border: 1px dashed #334155;
-  text-align: center;
-  font-size: 13px;
+.modal-content {
+  background:#020617;
+  border-radius:14px;
+  padding:20px;
+  max-width:320px;
+  width:100%;
 }
-
-.upgrade button {
-  margin-top: 10px;
-  background: linear-gradient(135deg, #16a34a, #15803d);
-}
-
-.tutorial {
-  margin-top: 18px;
-  font-size: 12px;
-  color: #94a3b8;
-  line-height: 1.6;
-  border-top: 1px solid #1e293b;
-  padding-top: 14px;
+input {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #334155;
+  background:#020617;
+  color:#fff;
+  margin-bottom:8px;
 }
 </style>
 </head>
@@ -128,87 +103,166 @@ button:active {
 <div class="app">
 
 <h1>Lotofácil Quant</h1>
-<div class="mode" id="modo">Modo FREE</div>
+<div class="subtitle">Organização estatística • Sem previsão</div>
+<div class="badge" id="badgeModo">Modo FREE</div>
 
-<!-- FILTROS PRO -->
-<div class="section pro-filter">
-  <label>Paridade</label>
-  <select id="paridade">
-    <option value="7-8">7 pares / 8 ímpares</option>
-    <option value="8-7">8 pares / 7 ímpares</option>
-  </select>
+<!-- TUTORIAL -->
+<div class="card">
+<h3>📘 Tutorial</h3>
+<div class="micro">
+Configure filtros → Gere jogos → Analise padrões.<br>
+Filtros NÃO alteram probabilidades.
+</div>
 </div>
 
-<div class="section pro-filter">
-  <label>Distribuição por linhas</label>
-  <select id="linhas">
-    <option value="equilibrada">Equilibrada</option>
-    <option value="concentrada">Concentrada</option>
-  </select>
+<!-- PARIDADE -->
+<div class="card">
+<h3>Paridade</h3>
+<div class="options">
+<div class="option active" onclick="setParidade(7)">7P / 8I</div>
+<div class="option" onclick="setParidade(6)">6P / 9I</div>
+<div class="option" onclick="setParidade(8)">8P / 7I</div>
+</div>
+</div>
+
+<!-- FILTROS PRO -->
+<div class="card" id="proFilters">
+<h3>Filtros PRO</h3>
+
+<div class="micro">Linhas do volante</div>
+<div class="options">
+<div class="option" onclick="toggleLinha(1)">L1</div>
+<div class="option" onclick="toggleLinha(2)">L2</div>
+<div class="option" onclick="toggleLinha(3)">L3</div>
+<div class="option" onclick="toggleLinha(4)">L4</div>
+<div class="option" onclick="toggleLinha(5)">L5</div>
+</div>
+
+<div class="micro">Soma dos números</div>
+<input id="somaMin" placeholder="Soma mínima (ex: 180)">
+<input id="somaMax" placeholder="Soma máxima (ex: 220)">
+
+<div class="micro">Atraso estatístico</div>
+<div class="options">
+<div class="option active" onclick="setAtraso(true)">Ativo</div>
+<div class="option" onclick="setAtraso(false)">Inativo</div>
+</div>
 </div>
 
 <button onclick="gerarJogo()">Gerar jogo</button>
-
 <div class="result" id="resultado">—</div>
 
-<div class="upgrade" id="upgradeBox">
-  <strong>Desbloqueie o modo PRO</strong><br>
-  Controle estatístico avançado<br>
-  <button onclick="ativarPro()">Ativar PRO</button>
+<div class="box">
+<b>Histórico</b>
+<div id="historico"></div>
 </div>
 
-<div class="tutorial">
-<strong>Guia rápido:</strong><br><br>
-• FREE: jogos equilibrados automáticos<br>
-• PRO: filtros estatísticos controláveis<br>
-• Nenhuma ferramenta prevê sorteios<br>
-• Matemática ≠ promessa
+<div class="box">
+<b>Estatísticas</b>
+<div id="estatisticas"></div>
 </div>
 
+<div class="micro" style="text-align:center;margin-top:10px;" id="ctaPro">
+<a href="#" onclick="abrirPro()">Ativar modo PRO</a>
+</div>
+
+</div>
+
+<!-- MODAL PRO -->
+<div class="modal" id="modalPro">
+<div class="modal-content">
+<h3>Ativar PRO</h3>
+<input id="codigoPro" placeholder="Código PRO">
+<button onclick="ativarPro()">Ativar</button>
+</div>
 </div>
 
 <script>
-let isPro = localStorage.getItem("isPro") === "true";
+const HIST="hist";
+let paresSel=7, linhas=[], usarAtraso=true;
+let isPro = localStorage.getItem("PRO")==="1";
 
-function atualizarInterface() {
-  const filtros = document.querySelectorAll(".pro-filter");
-  const modo = document.getElementById("modo");
-  const upgrade = document.getElementById("upgradeBox");
+function setParidade(p){paresSel=p;}
+function toggleLinha(l){linhas.includes(l)?linhas=linhas.filter(x=>x!==l):linhas.push(l);}
+function setAtraso(v){usarAtraso=v;}
 
-  if (isPro) {
-    filtros.forEach(f => f.classList.remove("locked"));
-    modo.innerText = "Modo PRO ATIVO";
-    upgrade.style.display = "none";
+function gerarJogo(){
+  let nums=[...Array(25)].map((_,i)=>i+1);
+  let pares=nums.filter(n=>n%2===0), imp=nums.filter(n=>n%2);
+  let jogo=new Set();
+
+  while(jogo.size<paresSel) jogo.add(pares[Math.random()*pares.length|0]);
+  while(jogo.size<15) jogo.add(imp[Math.random()*imp.length|0]);
+
+  let arr=[...jogo].sort((a,b)=>a-b);
+  let soma=arr.reduce((a,b)=>a+b,0);
+
+  let min=+document.getElementById("somaMin").value||0;
+  let max=+document.getElementById("somaMax").value||999;
+
+  if(soma<min||soma>max) return gerarJogo();
+
+  document.getElementById("resultado").innerText=arr.join(" • ");
+  salvar(arr);
+}
+
+function salvar(j){
+  let h=JSON.parse(localStorage.getItem(HIST)||"[]");
+  h.unshift(j);
+
+  let limite = isPro ? 50 : 10;
+  if(h.length>limite) h.pop();
+
+  localStorage.setItem(HIST,JSON.stringify(h));
+  render();
+}
+
+function render(){
+  let h=JSON.parse(localStorage.getItem(HIST)||"[]");
+  document.getElementById("historico").innerHTML =
+    h.map(j=>"• "+j.join(" ")).join("<br>");
+
+  if(h.length){
+    let somas=h.map(j=>j.reduce((a,b)=>a+b,0));
+    let media=(somas.reduce((a,b)=>a+b,0)/somas.length).toFixed(1);
+    document.getElementById("estatisticas").innerHTML =
+      "Jogos: "+h.length+"<br>Soma média: "+media;
+  }
+}
+
+function abrirPro(){
+  document.getElementById("modalPro").style.display="flex";
+}
+
+function ativarPro(){
+  if(document.getElementById("codigoPro").value==="QUANT-PRO-2026"){
+    localStorage.setItem("PRO","1");
+    location.reload();
   } else {
-    filtros.forEach(f => f.classList.add("locked"));
-    modo.innerText = "Modo FREE";
-    upgrade.style.display = "block";
+    alert("Código inválido");
   }
 }
 
-function ativarPro() {
-  // AQUI entra Hotmart / Stripe depois
-  localStorage.setItem("isPro", "true");
-  isPro = true;
-  atualizarInterface();
-  alert("Modo PRO ativado!");
-}
-
-function gerarJogo() {
-  const numeros = [];
-  while (numeros.length < 15) {
-    const n = Math.floor(Math.random() * 25) + 1;
-    if (!numeros.includes(n)) numeros.push(n);
+function init(){
+  if(!isPro){
+    document.getElementById("proFilters").classList.add("locked");
+  } else {
+    document.getElementById("badgeModo").innerText="PRO ATIVO";
+    document.getElementById("badgeModo").classList.add("pro");
+    document.getElementById("ctaPro").style.display="none";
   }
-  numeros.sort((a,b)=>a-b);
-  document.getElementById("resultado").innerText =
-    numeros.map(n=>n.toString().padStart(2,"0")).join(" • ");
+  render();
 }
 
-atualizarInterface();
+init();
+
+if("serviceWorker" in navigator)
+  navigator.serviceWorker.register("service-worker.js");
 </script>
 
 </body>
 </html>
+
+
 
 

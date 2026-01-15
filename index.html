@@ -106,7 +106,6 @@ input {
 <div class="subtitle">Organização estatística • Sem previsão</div>
 <div class="badge" id="badgeModo">Modo FREE</div>
 
-<!-- TUTORIAL -->
 <div class="card">
 <h3>📘 Tutorial</h3>
 <div class="micro">
@@ -116,12 +115,12 @@ Filtros NÃO alteram probabilidades.
 </div>
 
 <!-- PARIDADE -->
-<div class="card">
+<div class="card" id="cardParidade">
 <h3>Paridade</h3>
 <div class="options">
-<div class="option active" onclick="setParidade(7)">7P / 8I</div>
-<div class="option" onclick="setParidade(6)">6P / 9I</div>
-<div class="option" onclick="setParidade(8)">8P / 7I</div>
+<div class="option active" onclick="setParidade(7,this)">7P / 8I</div>
+<div class="option" onclick="setParidade(6,this)">6P / 9I</div>
+<div class="option" onclick="setParidade(8,this)">8P / 7I</div>
 </div>
 </div>
 
@@ -131,11 +130,11 @@ Filtros NÃO alteram probabilidades.
 
 <div class="micro">Linhas do volante</div>
 <div class="options">
-<div class="option" onclick="toggleLinha(1)">L1</div>
-<div class="option" onclick="toggleLinha(2)">L2</div>
-<div class="option" onclick="toggleLinha(3)">L3</div>
-<div class="option" onclick="toggleLinha(4)">L4</div>
-<div class="option" onclick="toggleLinha(5)">L5</div>
+<div class="option" onclick="toggleLinha(1,this)">L1</div>
+<div class="option" onclick="toggleLinha(2,this)">L2</div>
+<div class="option" onclick="toggleLinha(3,this)">L3</div>
+<div class="option" onclick="toggleLinha(4,this)">L4</div>
+<div class="option" onclick="toggleLinha(5,this)">L5</div>
 </div>
 
 <div class="micro">Soma dos números</div>
@@ -144,23 +143,16 @@ Filtros NÃO alteram probabilidades.
 
 <div class="micro">Atraso estatístico</div>
 <div class="options">
-<div class="option active" onclick="setAtraso(true)">Ativo</div>
-<div class="option" onclick="setAtraso(false)">Inativo</div>
+<div class="option active" onclick="setAtraso(true,this)">Ativo</div>
+<div class="option" onclick="setAtraso(false,this)">Inativo</div>
 </div>
 </div>
 
 <button onclick="gerarJogo()">Gerar jogo</button>
 <div class="result" id="resultado">—</div>
 
-<div class="box">
-<b>Histórico</b>
-<div id="historico"></div>
-</div>
-
-<div class="box">
-<b>Estatísticas</b>
-<div id="estatisticas"></div>
-</div>
+<div class="box"><b>Histórico</b><div id="historico"></div></div>
+<div class="box"><b>Estatísticas</b><div id="estatisticas"></div></div>
 
 <div class="micro" style="text-align:center;margin-top:10px;" id="ctaPro">
 <a href="#" onclick="abrirPro()">Ativar modo PRO</a>
@@ -182,79 +174,95 @@ const HIST="hist";
 let paresSel=7, linhas=[], usarAtraso=true;
 let isPro = localStorage.getItem("PRO")==="1";
 
-function setParidade(p){paresSel=p;}
-function toggleLinha(l){linhas.includes(l)?linhas=linhas.filter(x=>x!==l):linhas.push(l);}
-function setAtraso(v){usarAtraso=v;}
+function setParidade(p,el){
+  paresSel=p;
+  document.querySelectorAll("#cardParidade .option")
+    .forEach(o=>o.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function toggleLinha(l,el){
+  if(linhas.includes(l)){
+    linhas = linhas.filter(x=>x!==l);
+    el.classList.remove("active");
+  } else {
+    linhas.push(l);
+    el.classList.add("active");
+  }
+}
+
+function setAtraso(v,el){
+  usarAtraso=v;
+  el.parentElement.querySelectorAll(".option")
+    .forEach(o=>o.classList.remove("active"));
+  el.classList.add("active");
+}
 
 function gerarJogo(){
   let nums=[...Array(25)].map((_,i)=>i+1);
-  let pares=nums.filter(n=>n%2===0), imp=nums.filter(n=>n%2);
+  let pares=nums.filter(n=>n%2===0);
+  let imp=nums.filter(n=>n%2!==0);
   let jogo=new Set();
 
   while(jogo.size<paresSel) jogo.add(pares[Math.random()*pares.length|0]);
   while(jogo.size<15) jogo.add(imp[Math.random()*imp.length|0]);
 
   let arr=[...jogo].sort((a,b)=>a-b);
+
+  if(isPro && linhas.length){
+    const lv={
+      1:[1,2,3,4,5],
+      2:[6,7,8,9,10],
+      3:[11,12,13,14,15],
+      4:[16,17,18,19,20],
+      5:[21,22,23,24,25]
+    };
+    let ok=linhas.every(l=>arr.some(n=>lv[l].includes(n)));
+    if(!ok) return gerarJogo();
+  }
+
   let soma=arr.reduce((a,b)=>a+b,0);
-
-  let min=+document.getElementById("somaMin").value||0;
-  let max=+document.getElementById("somaMax").value||999;
-
+  let min=+somaMin.value||0, max=+somaMax.value||999;
   if(soma<min||soma>max) return gerarJogo();
 
-  document.getElementById("resultado").innerText=arr.join(" • ");
+  resultado.innerText=arr.join(" • ");
   salvar(arr);
 }
 
 function salvar(j){
   let h=JSON.parse(localStorage.getItem(HIST)||"[]");
   h.unshift(j);
-
-  let limite = isPro ? 50 : 10;
-  if(h.length>limite) h.pop();
-
+  if(h.length>(isPro?50:10)) h.pop();
   localStorage.setItem(HIST,JSON.stringify(h));
   render();
 }
 
 function render(){
   let h=JSON.parse(localStorage.getItem(HIST)||"[]");
-  document.getElementById("historico").innerHTML =
-    h.map(j=>"• "+j.join(" ")).join("<br>");
-
+  historico.innerHTML=h.map(j=>"• "+j.join(" ")).join("<br>");
   if(h.length){
-    let somas=h.map(j=>j.reduce((a,b)=>a+b,0));
-    let media=(somas.reduce((a,b)=>a+b,0)/somas.length).toFixed(1);
-    document.getElementById("estatisticas").innerHTML =
-      "Jogos: "+h.length+"<br>Soma média: "+media;
+    let m=(h.map(j=>j.reduce((a,b)=>a+b,0))
+      .reduce((a,b)=>a+b,0)/h.length).toFixed(1);
+    estatisticas.innerHTML="Jogos: "+h.length+"<br>Soma média: "+m;
   }
 }
 
-function abrirPro(){
-  document.getElementById("modalPro").style.display="flex";
-}
-
+function abrirPro(){modalPro.style.display="flex";}
 function ativarPro(){
-  if(document.getElementById("codigoPro").value==="QUANT-PRO-2026"){
+  if(codigoPro.value==="QUANT-PRO-2026"){
     localStorage.setItem("PRO","1");
     location.reload();
-  } else {
-    alert("Código inválido");
-  }
+  } else alert("Código inválido");
 }
 
-function init(){
-  if(!isPro){
-    document.getElementById("proFilters").classList.add("locked");
-  } else {
-    document.getElementById("badgeModo").innerText="PRO ATIVO";
-    document.getElementById("badgeModo").classList.add("pro");
-    document.getElementById("ctaPro").style.display="none";
-  }
-  render();
+if(!isPro){
+  proFilters.classList.add("locked");
+}else{
+  badgeModo.innerText="PRO ATIVO";
+  badgeModo.classList.add("pro");
+  ctaPro.style.display="none";
 }
-
-init();
+render();
 
 if("serviceWorker" in navigator)
   navigator.serviceWorker.register("service-worker.js");
@@ -262,6 +270,8 @@ if("serviceWorker" in navigator)
 
 </body>
 </html>
+
+
 
 
 

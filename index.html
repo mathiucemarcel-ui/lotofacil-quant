@@ -1,123 +1,214 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Lotofácil Quant</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lotofácil Quant PRO</title>
 
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0b0f19;
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
+<style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(circle at top, #020617, #000);
+  color: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
 
-    .app {
-      background: #020617;
-      width: 100%;
-      max-width: 420px;
-      padding: 24px;
-      border-radius: 16px;
-    }
+.app {
+  background: linear-gradient(180deg, #020617, #020617);
+  width: 100%;
+  max-width: 430px;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+}
 
-    h1 { text-align: center; }
+h1 {
+  text-align: center;
+  margin-bottom: 4px;
+}
 
-    label {
-      font-size: 13px;
-      display: block;
-      margin-top: 12px;
-      color: #94a3b8;
-    }
+.mode {
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 18px;
+  padding: 6px;
+  border-radius: 20px;
+  background: #020617;
+  border: 1px solid #1e293b;
+}
 
-    select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 8px;
-      border: none;
-    }
+.section {
+  margin-bottom: 16px;
+}
 
-    button {
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      margin-top: 16px;
-      cursor: pointer;
-    }
+label {
+  font-size: 13px;
+  color: #cbd5f5;
+  display: block;
+  margin-bottom: 6px;
+}
 
-    .result {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 18px;
-    }
-  </style>
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: #020617;
+  color: #e5e7eb;
+  border: 1px solid #1e293b;
+}
+
+.locked {
+  opacity: 0.45;
+  pointer-events: none;
+  position: relative;
+}
+
+.locked::after {
+  content: "🔒 PRO";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 12px;
+  color: #facc15;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.result {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.upgrade {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #020617, #020617);
+  border: 1px dashed #334155;
+  text-align: center;
+  font-size: 13px;
+}
+
+.upgrade button {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.tutorial {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.6;
+  border-top: 1px solid #1e293b;
+  padding-top: 14px;
+}
+</style>
 </head>
 
 <body>
 <div class="app">
-  <h1>Lotofácil Quant</h1>
 
-  <label>Pares desejados</label>
-  <select id="pares">
-    <option value="6">6 pares</option>
-    <option value="7">7 pares</option>
-    <option value="8">8 pares</option>
+<h1>Lotofácil Quant</h1>
+<div class="mode" id="modo">Modo FREE</div>
+
+<!-- FILTROS PRO -->
+<div class="section pro-filter">
+  <label>Paridade</label>
+  <select id="paridade">
+    <option value="7-8">7 pares / 8 ímpares</option>
+    <option value="8-7">8 pares / 7 ímpares</option>
   </select>
+</div>
 
-  <label>Linhas do volante</label>
+<div class="section pro-filter">
+  <label>Distribuição por linhas</label>
   <select id="linhas">
-    <option value="todas">Todas</option>
-    <option value="1">Linha 1</option>
-    <option value="2">Linha 2</option>
-    <option value="3">Linha 3</option>
-    <option value="4">Linha 4</option>
-    <option value="5">Linha 5</option>
+    <option value="equilibrada">Equilibrada</option>
+    <option value="concentrada">Concentrada</option>
   </select>
+</div>
 
-  <button onclick="gerarJogo()">Gerar jogo</button>
+<button onclick="gerarJogo()">Gerar jogo</button>
 
-  <div class="result" id="resultado">—</div>
+<div class="result" id="resultado">—</div>
+
+<div class="upgrade" id="upgradeBox">
+  <strong>Desbloqueie o modo PRO</strong><br>
+  Controle estatístico avançado<br>
+  <button onclick="ativarPro()">Ativar PRO</button>
+</div>
+
+<div class="tutorial">
+<strong>Guia rápido:</strong><br><br>
+• FREE: jogos equilibrados automáticos<br>
+• PRO: filtros estatísticos controláveis<br>
+• Nenhuma ferramenta prevê sorteios<br>
+• Matemática ≠ promessa
+</div>
+
 </div>
 
 <script>
-function gerarJogo() {
-  const paresDesejados = parseInt(document.getElementById("pares").value);
-  const linhaFiltro = document.getElementById("linhas").value;
+let isPro = localStorage.getItem("isPro") === "true";
 
-  const numeros = Array.from({ length: 25 }, (_, i) => i + 1);
+function atualizarInterface() {
+  const filtros = document.querySelectorAll(".pro-filter");
+  const modo = document.getElementById("modo");
+  const upgrade = document.getElementById("upgradeBox");
 
-  let candidatos = numeros.filter(n => {
-    if (linhaFiltro === "todas") return true;
-    return Math.ceil(n / 5) == linhaFiltro;
-  });
-
-  const pares = candidatos.filter(n => n % 2 === 0);
-  const impares = candidatos.filter(n => n % 2 !== 0);
-
-  if (pares.length < paresDesejados) {
-    alert("Filtro inválido para essa linha.");
-    return;
+  if (isPro) {
+    filtros.forEach(f => f.classList.remove("locked"));
+    modo.innerText = "Modo PRO ATIVO";
+    upgrade.style.display = "none";
+  } else {
+    filtros.forEach(f => f.classList.add("locked"));
+    modo.innerText = "Modo FREE";
+    upgrade.style.display = "block";
   }
-
-  const jogo = new Set();
-
-  while (jogo.size < paresDesejados) {
-    jogo.add(pares[Math.floor(Math.random() * pares.length)]);
-  }
-
-  while (jogo.size < 15) {
-    jogo.add(impares[Math.floor(Math.random() * impares.length)]);
-  }
-
-  const resultado = Array.from(jogo).sort((a, b) => a - b);
-  document.getElementById("resultado").innerText =
-    resultado.map(n => n.toString().padStart(2, "0")).join(" • ");
 }
+
+function ativarPro() {
+  // AQUI entra Hotmart / Stripe depois
+  localStorage.setItem("isPro", "true");
+  isPro = true;
+  atualizarInterface();
+  alert("Modo PRO ativado!");
+}
+
+function gerarJogo() {
+  const numeros = [];
+  while (numeros.length < 15) {
+    const n = Math.floor(Math.random() * 25) + 1;
+    if (!numeros.includes(n)) numeros.push(n);
+  }
+  numeros.sort((a,b)=>a-b);
+  document.getElementById("resultado").innerText =
+    numeros.map(n=>n.toString().padStart(2,"0")).join(" • ");
+}
+
+atualizarInterface();
 </script>
+
 </body>
 </html>
+
+
